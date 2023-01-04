@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const errorHandler = require("../middlewares/errorHandler")
 const UserController = require("../controllers/UserController");
 const ProductController = require("../controllers/ProductController");
 const FavController = require("../controllers/FavController");
@@ -12,8 +13,10 @@ router.post("/login", UserController.login);
 router.use(authN);
 
 // User
+router.get("/user", UserController.readAllUser)
 router.get("/user-login", UserController.readUserLogin);
 router.put("/user/:id", UserController.editUser);
+router.delete("/user/:id", authZ, UserController.deleteUser)
 
 // Product
 router.get("/product", ProductController.readAllProducts);
@@ -32,5 +35,7 @@ router.get("/cart", CartController.readUserCart)
 router.post("/cart", CartController.addUserCart)
 router.patch("/cart/:id", CartController.updateQuantity)
 router.delete("/cart/:id", CartController.deleteUserCart)
+
+router.use(errorHandler)
 
 module.exports = router;

@@ -18,6 +18,9 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name === "Unauthentication") {
     code = 401
     msg = "Login first"
+  } else if (err.name === "Forbidden") {
+    code = 403
+    msg = "Unauthorized"
   } else if (err.name === "WrongEmail") {
     code = 401
     msg = "Wrong email, please use correct email"

@@ -1,4 +1,6 @@
 const { User } = require("../models");
+const { comparePassword } = require("../helpers/bcrypt")
+const { signToken } = require("../helpers/jwt")
 
 class UserController {
   static async register(req, res, next) {
@@ -27,9 +29,9 @@ class UserController {
       });
 
       if (!foundUser) {
-        throw { name: "InvalidInput" };
+        throw { name: "UserNotFound" };
       }
-
+      
       if (!comparePassword(password, foundUser.password)) {
         throw { name: "InvalidInput" };
       }
@@ -48,6 +50,18 @@ class UserController {
     }
   }
 
+  static async readAllUser(req, res, next) {
+    try {
+      const response = await User.findAll({
+        attributes: ["id", "name", "email"]
+      })
+
+      res.status(200).json(response)
+    } catch (err) {
+      next(err)
+    }
+  }
+
   static async readUserLogin(req, res, next) {
     try {
       const id = +req.params.id;
@@ -57,7 +71,7 @@ class UserController {
       });
 
       if (!response) {
-        throw { name: "NotFound" };
+        throw { name: "UserNotFound" };
       }
 
       res.status(200).json(response);
@@ -74,7 +88,7 @@ class UserController {
       const foundUser = User.findByPk(id);
 
       if (!foundUser) {
-        throw { name: "NotFound" };
+        throw { name: "UserNotFound" };
       }
 
       const response = await User.update(obj, {
@@ -85,6 +99,29 @@ class UserController {
       res.status(200).json(response);
     } catch (err) {
       next(err);
+    }
+  }
+
+  static async deleteUser(req, res, next) {
+    try {
+      const id = +req.params.id;
+
+      const foundUser = await User.findByPk(id);
+
+      if (!foundUser) {
+        throw { name: "UserNotFound" };
+      }
+
+      await User.destroy({
+        where: { id },
+      });
+
+      res
+        .status(200)
+        .json({ message: `User with id ${id} has been deleted` });
+
+    } catch (err) {
+      next(err)
     }
   }
 }
