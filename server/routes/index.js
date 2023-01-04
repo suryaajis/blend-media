@@ -10,6 +10,9 @@ const { authN, authZ } = require("../middlewares/auth");
 router.post("/register", UserController.register);
 router.post("/login", UserController.login);
 
+router.get("/product", ProductController.readAllProducts);
+router.get("/product/:id", ProductController.detailProduct);
+
 router.use(authN);
 
 // User
@@ -19,8 +22,6 @@ router.put("/user/:id", UserController.editUser);
 router.delete("/user/:id", authZ, UserController.deleteUser)
 
 // Product
-router.get("/product", ProductController.readAllProducts);
-router.get("/product/:id", ProductController.detailProduct);
 router.post("/product", authZ, ProductController.addProduct)
 router.put("/product/:id", authZ, ProductController.editProduct)
 router.delete("/product/:id", authZ, ProductController.deleteProduct)

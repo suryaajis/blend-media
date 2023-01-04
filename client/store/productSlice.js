@@ -1,26 +1,19 @@
-import { createSlice } from '@reduxjs/toolkit'
-
+import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
-  products: []
-}
+  listProducts: []
+};
 
 export const productSlice = createSlice({
-  name: 'product',
+  name: "product",
   initialState,
   reducers: {
-    increment: (state) => {
-      state.value += 1
-    },
-    decrement: (state) => {
-      state.value -= 1
-    },
-    incrementByAmount: (state, action) => {
-      state.value += action.payload
-    },
+    updateListProducts: (state, action) => {
+      state.listProducts = action.payload
+    }
   },
-})
+});
 
 // Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = productSlice.actions
+export const { updateListProducts } = productSlice.actions;
 
-export default productSlice.reducer
+export default productSlice.reducer;

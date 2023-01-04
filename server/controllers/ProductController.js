@@ -1,13 +1,46 @@
+const { Op } = require("sequelize");
 const { Product } = require("../models");
 
 class ProductController {
   static async readAllProducts(req, res, next) {
     try {
-      const response = await Product.findAll({
-        attributes: ["id", "product_id", "product_name", "product_image_url"],
-      });
+      const { page, search } = req.query;
+      const size = 12;
 
-      res.status(200).json(response);
+      let options = {
+        where: {},
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+        order: [["createdAt", "ASC"]],
+      };
+
+      if (search) {
+        options.where.name = { [Op.iLike]: `%${search}%` };
+      }
+
+      if (+page === 0) {
+        throw { name: "NotFound" };
+      }
+
+      let response;
+      let result;
+      if (page) {
+        options.limit = size;
+        options.offset = (+page - 1) * size;
+        response = await Product.findAndCountAll(options);
+        result = {
+          totalProducts: response.count,
+          product: response.rows,
+          totalPage: Math.ceil(response.count / size),
+          currentPage: +page,
+        };
+      } else {
+        response = await Product.findAll(options);
+        result = response;
+      }
+
+      res.status(200).json(result);
     } catch (err) {
       next(err);
     }
