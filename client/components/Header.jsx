@@ -15,14 +15,18 @@ import AdbIcon from "@mui/icons-material/Adb";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+import { setToken } from "../store/userSlice";
 
 const pages = ["Products"];
-const settings = ["Account", "Dashboard", "Logout"];
+const settings = ["Account", "Logout"];
 
 function Header() {
+  const dispatch = useDispatch()
   const router = useRouter();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const userDetail = useSelector(state => state.user.userDetail)
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -37,9 +41,20 @@ function Header() {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (setting) => {
     setAnchorElUser(null);
+    if (setting === "Logout") {
+      handleLogout()
+    } else if (setting === "Dashboard") {
+      router.push("/admin")
+    }
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token")
+    dispatch(setToken(null))
+    router.push("/auth")
+  }
 
   return (
     <>
@@ -156,11 +171,16 @@ function Header() {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
+                {userDetail.role == "admin" ?
+                  <MenuItem onClick={() => handleCloseUserMenu("Dashboard")}>
+                    <Typography textAlign="center">Dashboard</Typography>
+                  </MenuItem> : <></>}
                 {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
                     <Typography textAlign="center">{setting}</Typography>
                   </MenuItem>
                 ))}
+
               </Menu>
             </Box>
           </Toolbar>

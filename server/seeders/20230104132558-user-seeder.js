@@ -15,7 +15,7 @@ let list = [
     name: "customer",
     email: "customer@mail.com",
     password: "customer",
-    role: "buyer"
+    role: "customer"
   },
   {
     name: "store",

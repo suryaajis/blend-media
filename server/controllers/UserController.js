@@ -64,8 +64,8 @@ class UserController {
 
   static async readUserLogin(req, res, next) {
     try {
-      const id = +req.params.id;
-
+      const id = req.user.id;
+      
       const response = await User.findOne({
         where: { id },
       });

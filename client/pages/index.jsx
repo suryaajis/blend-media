@@ -13,11 +13,28 @@ import Container from "@mui/material/Container";
 
 import Layout from "../components/Layout"
 import CarouselImage from "../components/Carousel";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import { getUserLogin } from "../store/apiCalls";
+import CustomImageList from "../components/ImageList";
 
 const inter = Inter({ subsets: ["latin"] });
 const cards = [1, 2, 3, 4, 5, 6];
 
 export default function Home() {
+  const router = useRouter()
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token")
+    if (!token) {
+      router.push("/auth")
+    } else {
+      getUserLogin(dispatch)
+    }
+  }, [])
+
   return (
     <Layout pageTitle="Home Page">
       <CssBaseline />
@@ -45,44 +62,8 @@ export default function Home() {
             aksesoris pelengkap, software dan produk lainnya.
           </Typography>
         </Container>
-        <Container sx={{ py: 8 }} maxWidth="md">
-          {/* End hero unit */}
-          <Grid container spacing={4}>
-            {cards.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
-                <Card
-                  sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <CardMedia
-                    component="img"
-                    sx={{
-                      // 16:9
-                      pt: "56.25%",
-                    }}
-                    image="https://source.unsplash.com/random"
-                    alt="random"
-                  />
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      Heading
-                    </Typography>
-                    <Typography>
-                      This is a media card. You can use this section to describe
-                      the content.
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button size="small">View</Button>
-                    <Button size="small">Edit</Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+        <Container sx={{ py: 8, alignItems:"center" }} maxWidth="md">
+            <CustomImageList />
         </Container>
       </main>
     </Layout>
