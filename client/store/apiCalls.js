@@ -52,6 +52,23 @@ export const createProduct = async (payload, dispatch) => {
   }
 }
 
+export const deleteProduct = async (id) => {
+  try {
+    const access_token = localStorage.getItem("access_token")
+    const { data} = await axios({
+      url: `${baseUrl}/product/${id}`,
+      method: "DELETE",
+      headers: {
+        access_token
+      }
+    })
+
+    console.log(data)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export const fetchUsers = async (dispatch) => {
   try {
     const access_token = localStorage.getItem("access_token")
@@ -67,6 +84,23 @@ export const fetchUsers = async (dispatch) => {
     dispatch(updateListUsers(data))
   } catch (err) {
     console.log(err)
+  }
+}
+
+export const deleteUser = async (id) => {
+  try {
+    const access_token = localStorage.getItem("access_token")
+    const { data} = await axios({
+      url: `${baseUrl}/user/${id}`,
+      method: "DELETE",
+      headers: {
+        access_token
+      }
+    })
+
+    console.log(data)
+  } catch (error) {
+    console.log(error)
   }
 }
 

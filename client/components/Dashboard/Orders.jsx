@@ -17,9 +17,9 @@ import TextField from '@mui/material/TextField';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import styles from "./order.module.css"
-import { createProduct, fetchProducts, fetchUsers, registerUser } from "../../store/apiCalls"
+import { createProduct, deleteProduct, deleteUser, fetchProducts, fetchUsers, registerUser } from "../../store/apiCalls"
 import { useDispatch, useSelector } from "react-redux"
-import { Button, Divider } from '@mui/material';
+import { Button, Divider, IconButton } from '@mui/material';
 
 const style = {
   position: 'absolute',
@@ -77,8 +77,6 @@ export default function Orders(props) {
     setOpenAdd(false)
   }
 
-
-  
   function generateString(length) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = ' ';
@@ -103,7 +101,7 @@ export default function Orders(props) {
       real_pdp_url: data.get('real_pdp_url'),
     }
     createProduct(payload, dispatch)
-    fetchProducts({page: 1}, dispatch)
+    fetchProducts({ page: 1 }, dispatch)
     setOpenAddProduct(false)
   }
 
@@ -132,9 +130,13 @@ export default function Orders(props) {
                   <TableCell>{row.product_price}</TableCell>
                   <TableCell>{row.product_info}</TableCell>
                   <TableCell className={styles.tableF}>
-                    <EditIcon />
+                    <IconButton>
+                      <EditIcon />
+                    </IconButton>
                     <Divider orientation="vertical" flexItem />
-                    <DeleteIcon />
+                    <IconButton onClick={() => deleteProduct(row.id)}>
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
@@ -166,7 +168,9 @@ export default function Orders(props) {
                   <TableCell sx={{ display: 'flex' }}>
                     <EditIcon />
                     <Divider orientation="vertical" flexItem />
-                    <DeleteIcon />
+                    <IconButton onClick={() => deleteUser(row.id)}>
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
