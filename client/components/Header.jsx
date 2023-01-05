@@ -171,7 +171,7 @@ function Header() {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                {userDetail.role == "admin" ?
+                {userDetail?.role == "admin" ?
                   <MenuItem onClick={() => handleCloseUserMenu("Dashboard")}>
                     <Typography textAlign="center">Dashboard</Typography>
                   </MenuItem> : <></>}

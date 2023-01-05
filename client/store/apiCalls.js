@@ -1,7 +1,7 @@
 import { baseUrl } from "../api/server"
 import axios from "axios"
 import { updateListProducts, updateDetailProduct } from "./productSlice"
-import { setToken, setUser } from "./userSlice"
+import { setToken, setUser, updateListUsers } from "./userSlice"
 
 export const fetchProducts = async (payload, dispatch) => {
   try {
@@ -31,6 +31,40 @@ export const getDetailProduct = async (id, dispatch) => {
 
     console.log(data)
     dispatch(updateDetailProduct(data))
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+export const createProduct = async (payload, dispatch) => {
+  try {
+    const access_token = localStorage.getItem("access_token")
+    const { data } = await axios({
+      url: `${baseUrl}/product`,
+      method: "POST",
+      data: payload,
+      headers: {access_token}
+    })
+
+    console.log(data)
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+export const fetchUsers = async (dispatch) => {
+  try {
+    const access_token = localStorage.getItem("access_token")
+    const { data } = await axios({
+      url: `${baseUrl}/user`,
+      method: "GET",
+      headers: {
+        access_token
+      }
+    })
+
+    console.log(data, "list users")
+    dispatch(updateListUsers(data))
   } catch (err) {
     console.log(err)
   }

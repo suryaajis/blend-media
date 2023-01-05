@@ -53,7 +53,8 @@ class UserController {
   static async readAllUser(req, res, next) {
     try {
       const response = await User.findAll({
-        attributes: ["id", "name", "email"]
+        attributes: ["id", "name", "email"],
+        order: [["id", "ASC"]]
       })
 
       res.status(200).json(response)

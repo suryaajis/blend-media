@@ -12,7 +12,7 @@ class ProductController {
         attributes: {
           exclude: ["createdAt", "updatedAt"],
         },
-        order: [["createdAt", "ASC"]],
+        order: [["id", "ASC"]],
       };
 
       console.log(search, "search")

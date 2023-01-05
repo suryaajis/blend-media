@@ -20,6 +20,7 @@ const authN = async (req, res, next) => {
       id: foundUser.id,
       name: foundUser.name,
       email: foundUser.email,
+      role: foundUser.role
     };
 
     next();
@@ -30,8 +31,7 @@ const authN = async (req, res, next) => {
 
 const authZ = async (req, res, next) => {
   try {
-    const role = req.user.role;
-    if (role === "admin") {
+    if (req.user.role === "admin") {
       next();
     } else {
       throw { name: "Forbidden" };
