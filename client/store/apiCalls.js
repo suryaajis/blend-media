@@ -23,7 +23,7 @@ export const fetchProducts = async (payload, dispatch) => {
 
 export const getDetailProduct = async (id, dispatch) => {
   try {
-    
+
     const { data } = await axios({
       url: `${baseUrl}/product/${id}`,
       method: "GET"
@@ -43,7 +43,7 @@ export const createProduct = async (payload, dispatch) => {
       url: `${baseUrl}/product`,
       method: "POST",
       data: payload,
-      headers: {access_token}
+      headers: { access_token }
     })
 
     console.log(data)
@@ -55,7 +55,7 @@ export const createProduct = async (payload, dispatch) => {
 export const deleteProduct = async (id) => {
   try {
     const access_token = localStorage.getItem("access_token")
-    const { data} = await axios({
+    const { data } = await axios({
       url: `${baseUrl}/product/${id}`,
       method: "DELETE",
       headers: {
@@ -90,7 +90,7 @@ export const fetchUsers = async (dispatch) => {
 export const deleteUser = async (id) => {
   try {
     const access_token = localStorage.getItem("access_token")
-    const { data} = await axios({
+    const { data } = await axios({
       url: `${baseUrl}/user/${id}`,
       method: "DELETE",
       headers: {
@@ -114,7 +114,7 @@ export const loginUser = async (payload, dispatch) => {
         password: payload.password
       }
     })
-    
+
     localStorage.setItem("access_token", data.access_token)
     setToken(data.access_token)
   } catch (error) {
@@ -134,7 +134,39 @@ export const registerUser = async (payload, dispatch) => {
         role: "customer"
       }
     })
-    
+
+    console.log(data)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const editUser = async (id, payload) => {
+  try {
+    const access_token = localStorage.getItem("access_token")
+    const { data } = await axios({
+      url: `${baseUrl}/user/${id}`,
+      method: "PUT",
+      data: payload,
+      headers: { access_token }
+    })
+
+    console.log(data)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const editProduct = async (id, payload) => {
+  try {
+    const access_token = localStorage.getItem("access_token")
+    const { data } = await axios({
+      url: `${baseUrl}/product/${id}`,
+      method: "PUT",
+      data: payload,
+      headers: { access_token }
+    })
+
     console.log(data)
   } catch (error) {
     console.log(error)
@@ -151,7 +183,7 @@ export const getUserLogin = async (dispatch) => {
         access_token
       }
     })
-    
+
     console.log(data)
     dispatch(setUser(data))
   } catch (error) {

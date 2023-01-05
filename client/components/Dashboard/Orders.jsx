@@ -17,7 +17,7 @@ import TextField from '@mui/material/TextField';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import styles from "./order.module.css"
-import { createProduct, deleteProduct, deleteUser, fetchProducts, fetchUsers, registerUser } from "../../store/apiCalls"
+import { createProduct, deleteProduct, deleteUser, editUser, fetchProducts, fetchUsers, registerUser } from "../../store/apiCalls"
 import { useDispatch, useSelector } from "react-redux"
 import { Button, Divider, IconButton } from '@mui/material';
 
@@ -42,6 +42,22 @@ export default function Orders(props) {
   const [page, setPage] = React.useState(1)
   const [openAdd, setOpenAdd] = React.useState(false);
   const [openAddProduct, setOpenAddProduct] = React.useState(false);
+  const [openEdit, setOpenEdit] = React.useState(false)
+  const [openEditProduct, setOpenEditProduct] = React.useState(false)
+  const [user, setUser] = React.useState({
+    id: null,
+    name: "",
+    email: ""
+  })
+  const [product, setProduct] = React.useState({
+    product_id: "",
+    product_name: "",
+    brand: "",
+    product_price: 0,
+    product_info: "",
+    product_image_url: "",
+    real_pdp_url: "",
+  })
 
   React.useEffect(() => {
     if (current == "Users") {
@@ -65,7 +81,6 @@ export default function Orders(props) {
   }
 
   const addUser = (event) => {
-    event.preventDefault();
     const data = new FormData(event.currentTarget);
     const payload = {
       name: data.get('fullname'),
@@ -89,7 +104,6 @@ export default function Orders(props) {
   }
 
   const addProduct = (event) => {
-    event.preventDefault();
     const data = new FormData(event.currentTarget);
     const payload = {
       product_id: generateString(Math.random()),
@@ -103,6 +117,12 @@ export default function Orders(props) {
     createProduct(payload, dispatch)
     fetchProducts({ page: 1 }, dispatch)
     setOpenAddProduct(false)
+  }
+
+  const handleEditUser = (event, item) => {
+    editUser(user.id, user)
+    fetchUsers(dispatch)
+    setOpenEdit(false)
   }
 
   return (
@@ -166,9 +186,21 @@ export default function Orders(props) {
                   <TableCell>{row.name}</TableCell>
                   <TableCell>{row.email}</TableCell>
                   <TableCell sx={{ display: 'flex' }}>
-                    <EditIcon />
+                    <IconButton onClick={() => {
+                      setUser({
+                        id: row.id,
+                        name: row.name,
+                        email: row.email
+                      })
+                      setOpenEdit(true)
+                    }}>
+                      <EditIcon />
+                    </IconButton>
                     <Divider orientation="vertical" flexItem />
-                    <IconButton onClick={() => deleteUser(row.id)}>
+                    <IconButton onClick={() => {
+                      deleteUser(row.id)
+                      fetchUsers(dispatch)
+                    }}>
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -242,11 +274,144 @@ export default function Orders(props) {
         <Modal
           aria-labelledby="transition-modal-title"
           aria-describedby="transition-modal-description"
+          open={openEdit}
+          onClose={() => setOpenEdit(!openEdit)}
+          closeAfterTransition
+        >
+          <Fade in={openEdit}>
+            <Box sx={style} >
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    autoComplete="given-name"
+                    name="fullname"
+                    required
+                    fullWidth
+                    id="fullname"
+                    label="Full Name"
+                    autoFocus
+                    value={user.name}
+                    onChange={(event) => setUser({ ...user, name: event.target.value })}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    value={user.email}
+                    onChange={(event) => setUser({ ...user, email: event.target.value })}
+                  />
+                </Grid>
+              </Grid>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                onClick={handleEditUser}
+              >
+                Edit
+              </Button>
+            </Box>
+          </Fade>
+        </Modal>
+      </div>
+
+      <div>
+        <Modal
+          aria-labelledby="transition-modal-title"
+          aria-describedby="transition-modal-description"
           open={openAddProduct}
           onClose={() => setOpenAddProduct(!openAddProduct)}
           closeAfterTransition
         >
           <Fade in={openAddProduct}>
+            <Box sx={style} component="form" noValidate onSubmit={addProduct}>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    autoComplete="given-name"
+                    name="product_name"
+                    required
+                    fullWidth
+                    id="product_name"
+                    label="Name"
+                    autoFocus
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="brand"
+                    label="Brand"
+                    name="brand"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="product_price"
+                    label="Price"
+                    id="product_price"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="product_info"
+                    label="Info"
+                    id="product_info"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="product_image_url"
+                    label="Image URL"
+                    id="product_image_url"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="real_pdp_url"
+                    label="Real PDP URL"
+                    id="real_pdp_url"
+                  />
+                </Grid>
+              </Grid>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Add Product
+              </Button>
+            </Box>
+          </Fade>
+        </Modal>
+      </div>
+
+      <div>
+        <Modal
+          aria-labelledby="transition-modal-title"
+          aria-describedby="transition-modal-description"
+          open={openEditProduct}
+          onClose={() => setOpenEditProduct(!openEditProduct)}
+          closeAfterTransition
+        >
+          <Fade in={openEditProduct}>
             <Box sx={style} component="form" noValidate onSubmit={addProduct}>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
