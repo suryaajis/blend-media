@@ -15,8 +15,9 @@ class ProductController {
         order: [["createdAt", "ASC"]],
       };
 
+      console.log(search, "search")
       if (search) {
-        options.where.name = { [Op.iLike]: `%${search}%` };
+        options.where.product_name = { [Op.iLike]: `%${search}%` };
       }
 
       if (+page === 0) {

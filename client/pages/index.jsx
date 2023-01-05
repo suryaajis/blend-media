@@ -24,7 +24,7 @@ export default function Home() {
       <main>
         {/* Hero unit */}
         <CarouselImage />
-        <Container maxWidth="sm">
+        <Container maxWidth="sm" className={styles.intro}>
           <Typography
             component="h1"
             variant="h2"

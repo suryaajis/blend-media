@@ -10,28 +10,40 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import styles from "./index.module.css";
+import { useRouter } from 'next/router'
 
 import Layout from "../../components/Layout";
 import { fetchProducts } from "../../store/apiCalls";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import SearchBar from "../../components/SearchBar";
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8];
 
 export default function Products() {
+  const router = useRouter()
+
   const dispatch = useDispatch();
   const listProducts = useSelector((state) => state.product.listProducts);
 
   const [sizePage, setSizePage] = useState(1);
 
   useEffect(() => {
-    //
-    fetchProducts(sizePage, dispatch);
+    fetchProducts({page: sizePage}, dispatch);
   }, []);
 
   const handleChangePage = (event, newPage) => {
     setSizePage(newPage);
+    fetchProducts({page: newPage}, dispatch)
   };
+
+  const handleDetail = (item) => {
+    router.push(`/products/${item.id}`)
+  }
+
+  const handleCart = () => {
+
+  }
 
   return (
     <Layout pageTitle="List Products">
@@ -44,50 +56,47 @@ export default function Products() {
           color="text.primary"
           gutterBottom
         >
-          iBox
+          List Products
         </Typography>
-      </Container>
 
+      </Container>
       <Container sx={{ py: 8 }} maxWidth="lg">
-        <Grid container spacing={4}>
-          {/* {listProducts?.map((card) => (
-            <Grid item key={card} xs={12} sm={6} md={3}>
+        <SearchBar />
+
+        <Grid container spacing={4} marginTop={5}>
+          {listProducts?.product?.map((item) => (
+            <Grid item key={item.id} xs={12} sm={6} md={3}>
               <Card
                 sx={{
                   width: "100%",
+                  height: "100%",
                   display: "flex",
                   flexDirection: "column",
                 }}
-                key={card.product_id}
               >
                 <CardMedia
                   component="img"
-                  sx={{
-                    // 16:9
-                    pt: "56.25%",
-                  }}
-                  image="https://source.unsplash.com/random"
-                  alt="random"
+                  image={item.product_image_url}
+                  alt="product_image"
                 />
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Typography gutterBottom variant="h5" component="h2">
-                    Heading
+                    {item.brand}
                   </Typography>
                   <Typography>
-                    This is a media card. You can use this section to describe
-                    the content.
+                    {item.product_name}
                   </Typography>
                 </CardContent>
                 <CardActions>
-                  <Button size="small">View</Button>
-                  <Button size="small">Edit</Button>
+                  <Button size="small" onClick={() => handleDetail(item)}>Detail</Button>
+                  <Button size="small" onClick={() => handleCart(item)}>Cart</Button>
                 </CardActions>
               </Card>
             </Grid>
-          ))} */}
+          ))}
         </Grid>
-        <Stack spacing={2}>
-          <Pagination count={10} page={sizePage} onChange={handleChangePage} className={styles.paginate} />
+        <Stack spacing={2} alignItems="center" marginTop={10}>
+          <Pagination count={listProducts?.totalPage} page={sizePage} onChange={handleChangePage} className={styles.paginate} />
         </Stack>
       </Container>
     </Layout>

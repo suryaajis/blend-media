@@ -16,7 +16,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const pages = ["Products", "Pricing", "Blog"];
+const pages = ["Products"];
 const settings = ["Account", "Dashboard", "Logout"];
 
 function Header() {
