@@ -50,6 +50,7 @@ export default function Auth() {
       password: data.get('password'),
     }
     loginUser(payload, dispatch)
+    router.push("/")
   };
 
   const handleRegister = (event) => {
