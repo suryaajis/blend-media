@@ -252,7 +252,7 @@ export const fetchCarts = async (dispatch) => {
       }
     })
 
-    console.log(data, "list favorite")
+    console.log(data, "list carts")
     dispatch(updateListCarts(data))
   } catch (err) {
     console.log(err)

@@ -1,31 +1,32 @@
-const { Cart } = require("../models")
+const { Cart } = require("../models");
 
 class CartController {
   static async readUserCart(req, res, next) {
     try {
-      const userId = +req.user.id
+      const userId = +req.user.id;
 
       const response = await Cart.findAll({
-        where: { user_id: userId}
-      })
-      
-      res.status(200).json(response)
+        where: { user_id: userId },
+        include: ["Product"],
+      });
+
+      res.status(200).json(response);
     } catch (err) {
-      next(err)
+      next(err);
     }
   }
 
-  static async addUserCart(req, res, next) { 
+  static async addUserCart(req, res, next) {
     try {
-      const response = await Favorite.create({
+      const response = await Cart.create({
         quantity: req.body.quantity,
         user_id: req.user.id,
-        product_id: req.body.product_id
-      })
-      
-      res.status(201).json(response)
+        product_id: req.body.product_id,
+      });
+
+      res.status(201).json(response);
     } catch (err) {
-      next(err)
+      next(err);
     }
   }
 
@@ -39,14 +40,17 @@ class CartController {
         throw { name: "NotFound" };
       }
 
-      const response = await Cart.update({ quantity: req.body.quantity} , {
-        where: {id},
-        returning:true
-      })
-      
-      res.status(200).json(response)
+      const response = await Cart.update(
+        { quantity: req.body.quantity },
+        {
+          where: { id },
+          returning: true,
+        }
+      );
+
+      res.status(200).json(response);
     } catch (err) {
-      next(err)
+      next(err);
     }
   }
 
@@ -66,9 +70,9 @@ class CartController {
 
       res.status(200).json({ message: `Cart with id ${id} has been deleted` });
     } catch (err) {
-      next(err)
+      next(err);
     }
   }
 }
 
-module.exports = CartController
+module.exports = CartController;

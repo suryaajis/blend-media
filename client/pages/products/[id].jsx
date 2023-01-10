@@ -14,19 +14,19 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Skeleton from "@mui/material/Skeleton";
 import Layout from "../../components/Layout";
-import { Box, Modal } from "@mui/material";
+import { Box, Modal, TextField } from "@mui/material";
 
 const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 export default function DetailProduct() {
   const router = useRouter();
@@ -34,15 +34,38 @@ export default function DetailProduct() {
   const { id } = router.query;
 
   const product = useSelector((state) => state.product.detailProduct);
-  const [cartModal, setCartModal] = useState(false)
+  const [cartModal, setCartModal] = useState(false);
+  const [cart, setCart] = useState({
+    quantity: 0,
+    price: 0,
+    product_id: null,
+  });
 
   useEffect(() => {
     getDetailProduct(id, dispatch);
   }, [id]);
 
+  const handleQuantity = (event) => {
+    setCart({
+      quantity: event.target.value,
+      price: +product.product_price * +event.target.value,
+      product_id: product.id,
+    });
+  };
+
   const handleCart = () => {
-    console.log(product);
-    // postCart(cart, dispatch);
+    const payload = {
+      quantity: cart.quantity,
+      product_id: cart.product_id,
+    };
+    postCart(payload, dispatch);
+    setCartModal(false);
+    setCart({
+      quantity: 0,
+      price: 0,
+      product_id: null,
+    });
+    router.push("/carts");
   };
 
   if (!product) {
@@ -84,9 +107,10 @@ export default function DetailProduct() {
                 Brand : {product?.brand} <br />
                 Price : {product?.product_price} <br />
                 Stock : {product?.product_info} <br />
-                <Link href={product?.real_pdp_url || ""} color="lightblue">
-                  Source iBox
-                </Link>
+                <Link
+                  href={product?.real_pdp_url || ""}
+                  color="lightblue"
+                ></Link>
               </Typography>
             </CardContent>
             <CardActions>
@@ -104,11 +128,21 @@ export default function DetailProduct() {
           >
             <Box sx={style}>
               <Typography id="modal-modal-title" variant="h6" component="h2">
-                Text in a modal
+                Cart
               </Typography>
-              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+              <TextField
+                id="quantity"
+                label="Quantity"
+                variant="outlined"
+                sx={{ mt: 2 }}
+                onChange={handleQuantity}
+              />
+              <Typography id="modal-modal-description" sx={{ mt: 2, mb: 2 }}>
+                Total Price : {cart.price}
               </Typography>
+              <Button size="small" variant="contained" onClick={handleCart}>
+                Submit
+              </Button>
             </Box>
           </Modal>
         </Container>
