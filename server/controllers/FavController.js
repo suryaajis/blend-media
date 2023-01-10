@@ -6,7 +6,8 @@ class FavController {
       const userId = +req.user.id
 
       const response = await Favorite.findAll({
-        where: { user_id: userId}
+        where: { user_id: userId},
+        include: ["Product"]
       })
       
       res.status(200).json(response)
