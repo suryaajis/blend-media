@@ -19,8 +19,8 @@ export default function CustomImageList() {
       cols={6}
       rowHeight={108}
     >
-      {itemData.map((item) => (
-        <ImageListItem key={item.img} cols={item.cols || 1} rows={item.rows || 1}>
+      {itemData.map((item, id) => (
+        <ImageListItem key={id} cols={item.cols || 1} rows={item.rows || 1}>
           <img
             {...srcset(item.img, 121, item.rows, item.cols)}
             alt={item.title}

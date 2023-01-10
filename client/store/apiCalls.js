@@ -2,6 +2,9 @@ import { baseUrl } from "../api/server"
 import axios from "axios"
 import { updateListProducts, updateDetailProduct } from "./productSlice"
 import { setToken, setUser, updateListUsers } from "./userSlice"
+import { updateListFavs } from "./favoriteSlice"
+import { updateListCarts } from "./cartSlice"
+
 
 export const fetchProducts = async (payload, dispatch) => {
   try {
@@ -29,7 +32,6 @@ export const getDetailProduct = async (id, dispatch) => {
       method: "GET"
     })
 
-    console.log(data)
     dispatch(updateDetailProduct(data))
   } catch (err) {
     console.log(err)
@@ -98,7 +100,6 @@ export const deleteUser = async (id) => {
       }
     })
 
-    console.log(data)
   } catch (error) {
     console.log(error)
   }
@@ -135,7 +136,6 @@ export const registerUser = async (payload, dispatch) => {
       }
     })
 
-    console.log(data)
   } catch (error) {
     console.log(error)
   }
@@ -184,8 +184,125 @@ export const getUserLogin = async (dispatch) => {
       }
     })
 
-    console.log(data)
     dispatch(setUser(data))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const fetchFavorites = async (dispatch) => {
+  try {
+    const access_token = localStorage.getItem("access_token")
+    const { data } = await axios({
+      url: `${baseUrl}/favorite`,
+      method: "GET",
+      headers: {
+        access_token
+      }
+    })
+
+    console.log(data, "list favorite")
+    dispatch(updateListFavs(data))
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+export const createFavorite = async (payload, dispatch) => {
+  try {
+    const access_token = localStorage.getItem("access_token")
+    const { data } = await axios({
+      url: `${baseUrl}/favorite`,
+      method: "POST",
+      data: payload,
+      headers: { access_token }
+    })
+
+    console.log(data)
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+export const deleteFavorite = async (id) => {
+  try {
+    const access_token = localStorage.getItem("access_token")
+    const { data } = await axios({
+      url: `${baseUrl}/favorite/${id}`,
+      method: "DELETE",
+      headers: {
+        access_token
+      }
+    })
+
+    console.log(data)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const fetchCarts = async (dispatch) => {
+  try {
+    const access_token = localStorage.getItem("access_token")
+    const { data } = await axios({
+      url: `${baseUrl}/cart`,
+      method: "GET",
+      headers: {
+        access_token
+      }
+    })
+
+    console.log(data, "list favorite")
+    dispatch(updateListCarts(data))
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+export const postCart = async (payload, dispatch) => {
+  try {
+    const access_token = localStorage.getItem("access_token")
+    const { data } = await axios({
+      url: `${baseUrl}/cart`,
+      method: "POST",
+      data: payload,
+      headers: { access_token }
+    })
+
+    console.log(data)
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+export const editCart = async (id, payload) => {
+  try {
+    const access_token = localStorage.getItem("access_token")
+    const { data } = await axios({
+      url: `${baseUrl}/cart/${id}`,
+      method: "PUT",
+      data: payload,
+      headers: { access_token }
+    })
+
+    console.log(data)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const deleteCart = async (id) => {
+  try {
+    const access_token = localStorage.getItem("access_token")
+    const { data } = await axios({
+      url: `${baseUrl}/cart/${id}`,
+      method: "DELETE",
+      headers: {
+        access_token
+      }
+    })
+
+    console.log(data)
   } catch (error) {
     console.log(error)
   }

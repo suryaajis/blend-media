@@ -13,44 +13,26 @@ import styles from "./index.module.css";
 import { useRouter } from "next/router";
 
 import Layout from "../../components/Layout";
-import { createFavorite, fetchProducts } from "../../store/apiCalls";
+import { fetchFavorites } from "../../store/apiCalls";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SearchBar from "../../components/SearchBar";
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8];
-
-export default function Products() {
+export default function Favorites() {
   const router = useRouter();
-
   const dispatch = useDispatch();
-  const listProducts = useSelector((state) => state.product.listProducts);
-
-  const [sizePage, setSizePage] = useState(1);
-  const [cart, setCart] = useState({
-    quantity: 0,
-    product_id: null
-  })
+  const listFavorites = useSelector((state) => state.favorite.listFavorites);
 
   useEffect(() => {
-    fetchProducts({ page: sizePage }, dispatch);
+    fetchFavorites(dispatch);
   }, []);
 
-  const handleChangePage = (event, newPage) => {
-    setSizePage(newPage);
-    fetchProducts({ page: newPage }, dispatch);
-  };
+  const handleCart = () => {};
 
-  const handleDetail = (item) => {
-    router.push(`/products/${item.id}`);
-  };
-
-  const handleFavorite = (item) => {
-    createFavorite({ product_id: item.id }, dispatch);
-  };
+  const handleDelete = () => {};
 
   return (
-    <Layout pageTitle="List Products">
+    <Layout pageTitle="List Favorites">
       <CssBaseline />
       <Container maxWidth="sm" className={styles.intro}>
         <Typography
@@ -60,14 +42,13 @@ export default function Products() {
           color="text.primary"
           gutterBottom
         >
-          List Products
+          List Favorites
         </Typography>
       </Container>
       <Container sx={{ py: 8 }} maxWidth="lg">
-        <SearchBar />
 
         <Grid container spacing={4} marginTop={5}>
-          {listProducts?.product?.map((item) => (
+          {listFavorites?.map((item) => (
             <Grid item key={item.id} xs={12} sm={6} md={3}>
               <Card
                 sx={{
@@ -79,35 +60,27 @@ export default function Products() {
               >
                 <CardMedia
                   component="img"
-                  image={item.product_image_url}
+                  image={item.Product.product_image_url}
                   alt="product_image"
                 />
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Typography gutterBottom variant="h5" component="h2">
-                    {item.brand}
+                    {item.Product.brand}
                   </Typography>
-                  <Typography>{item.product_name}</Typography>
+                  <Typography>{item.Product.product_name}</Typography>
                 </CardContent>
                 <CardActions>
-                  <Button size="small" onClick={() => handleDetail(item)}>
-                    Detail
+                  <Button size="small" onClick={() => handleCart(item)}>
+                    Cart
                   </Button>
-                  <Button size="small" onClick={() => handleFavorite(item)}>
-                    Favorite
+                  <Button size="small" onClick={() => handleDelete(item)}>
+                    Delete
                   </Button>
                 </CardActions>
               </Card>
             </Grid>
           ))}
         </Grid>
-        <Stack spacing={2} alignItems="center" marginTop={10}>
-          <Pagination
-            count={listProducts?.totalPage}
-            page={sizePage}
-            onChange={handleChangePage}
-            className={styles.paginate}
-          />
-        </Stack>
       </Container>
     </Layout>
   );
