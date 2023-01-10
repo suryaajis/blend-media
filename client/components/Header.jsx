@@ -17,17 +17,36 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { setToken } from "../store/userSlice";
-import { getUserLogin } from "../store/apiCalls";
+import { editUser, getUserLogin } from "../store/apiCalls";
+import { Fade, Grid, Modal, TextField } from "@mui/material";
 
 const pages = ["Products"];
 const settings = ["Account", "Logout"];
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 function Header() {
   const dispatch = useDispatch();
   const router = useRouter();
+  const userDetail = useSelector((state) => state.user.userDetail);
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const userDetail = useSelector((state) => state.user.userDetail);
+  const [refresh, setRefresh] = React.useState(false);
+  const [openEdit, setOpenEdit] = React.useState(false);
+  const [user, setUser] = React.useState({
+    id: null,
+    name: "",
+    email: "",
+  });
 
   React.useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -36,7 +55,7 @@ function Header() {
     } else {
       getUserLogin(dispatch);
     }
-  }, []);
+  }, [refresh]);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -57,7 +76,21 @@ function Header() {
       handleLogout();
     } else if (setting === "Dashboard") {
       router.push("/admin");
+    } else if (setting === "Account") {
+      setOpenEdit(true);
+      setUser({
+        id: userDetail.id,
+        name: userDetail.name,
+        email: userDetail.email,
+      });
+      setRefresh(!refresh);
     }
+  };
+
+  const handleEditUser = (event, item) => {
+    editUser(user.id, user);
+    setOpenEdit(false);
+    setRefresh(!refresh);
   };
 
   const handleLogout = () => {
@@ -232,6 +265,60 @@ function Header() {
             </Menu>
           </Box>
         </Toolbar>
+
+        <Modal
+          aria-labelledby="transition-modal-title"
+          aria-describedby="transition-modal-description"
+          open={openEdit}
+          onClose={() => setOpenEdit(!openEdit)}
+          closeAfterTransition
+        >
+          <Fade in={openEdit}>
+            <Box sx={style}>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    autoComplete="given-name"
+                    name="fullname"
+                    required
+                    fullWidth
+                    id="fullname"
+                    label="Full Name"
+                    autoFocus
+                    value={user.name}
+                    onChange={(event) =>
+                      setUser({ ...user, name: event.target.value })
+                    }
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    value={user.email}
+                    onChange={(event) =>
+                      setUser({ ...user, email: event.target.value })
+                    }
+                  />
+                </Grid>
+              </Grid>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                onClick={handleEditUser}
+              >
+                Edit
+              </Button>
+            </Box>
+          </Fade>
+        </Modal>
       </Container>
     </AppBar>
   );
